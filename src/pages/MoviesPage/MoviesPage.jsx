@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Form, Formik, Field } from "formik";
+import toast, { Toaster } from "react-hot-toast";
 import { fetchMovieByQuery } from "../../services/getMovies";
 import MovieList from "../../components/MovieList/MovieList";
 import s from "./MoviesPage.module.css";
@@ -8,6 +9,8 @@ import s from "./MoviesPage.module.css";
 const MoviesPage = () => {
   const [movies, setMovies] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [error, setError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const currentQuery = searchParams.get("query");
@@ -15,10 +18,13 @@ const MoviesPage = () => {
 
     const movieByQuery = async () => {
       try {
+        setIsLoading(true);
         const getMovieByQuery = await fetchMovieByQuery(currentQuery);
         setMovies(getMovieByQuery);
-      } catch (e) {
-        console.log(e);
+      } catch (error) {
+        setError(`Sorry, some mistake! ${error.message}`);
+      } finally {
+        setIsLoading(false);
       }
     };
     movieByQuery();
@@ -29,12 +35,18 @@ const MoviesPage = () => {
   };
 
   const onSubmit = (values) => {
-    setSearchParams({ query: values.query });
+    const { query } = values;
+    if (!query.trim()) {
+      toast.error("Search field is empty. Please enter your request");
+      return;
+    }
+    setSearchParams({ query });
   };
 
   return (
     <>
       <h1 className={s.title}>Search movies</h1>
+      <Toaster position="top-right" />
       <Formik initialValues={initialValues} onSubmit={onSubmit}>
         <Form className={s.searchBar}>
           <Field
@@ -50,6 +62,8 @@ const MoviesPage = () => {
           </button>
         </Form>
       </Formik>
+      {isLoading && <div>Movies is loading...</div>}
+      {error && <div>Oops! Something went wrong</div>}
       {movies.length > 0 && <MovieList movies={movies} />}
     </>
   );

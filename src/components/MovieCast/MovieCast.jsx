@@ -7,14 +7,19 @@ import s from "./MovieCast.module.css";
 const MovieCast = () => {
   const { movieId } = useParams();
   const [cast, setCast] = useState([]);
+  const [error, setError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchCast = async () => {
       try {
+        setIsLoading(true);
         const cast = await fetchMovieCastById(movieId);
         setCast(cast);
-      } catch (e) {
-        console.log(e);
+      } catch (error) {
+        setError(`Sorry, some mistake! ${error.message}`);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchCast();
@@ -25,6 +30,8 @@ const MovieCast = () => {
 
   return (
     <>
+      {isLoading && <div>Movie cast is loading...</div>}
+      {error && <div>Oops! Something went wrong</div>}
       <ul className={s.actorsList}>
         {cast.map(({ id, profile_path, original_name, character }) => (
           <li key={id} className={s.actorItem}>

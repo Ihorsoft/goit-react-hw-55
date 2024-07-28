@@ -14,6 +14,8 @@ import clsx from "clsx";
 const MovieDetailsPage = () => {
   const { movieId } = useParams();
   const [movie, setMovie] = useState(null);
+  const [error, setError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
 
   const backLinkHref = useRef(location.state || "/");
@@ -28,22 +30,27 @@ const MovieDetailsPage = () => {
   useEffect(() => {
     const getMovieById = async () => {
       try {
+        setIsLoading(true);
         const movieById = await fetchMovieById(movieId);
         setMovie(movieById);
-      } catch (e) {
-        console.log(e);
+      } catch (error) {
+        setError(`Sorry, some mistake! ${error.message}`);
+      } finally {
+        setIsLoading(false);
       }
     };
     getMovieById();
   }, [movieId]);
 
   if (!movie) {
-    return <h2>Loading...</h2>;
+    return <div>No movie details found</div>;
   }
 
   return (
     <>
       <h1 className={s.title}> Movie Details </h1>
+      {isLoading && <div>Movie details is loading...</div>}
+      {error && <div>Oops! Something went wrong</div>}
       <Link className={s.goBack} to={backLinkHref.current}>
         Go back
       </Link>
