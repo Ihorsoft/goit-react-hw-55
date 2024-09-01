@@ -8,7 +8,7 @@ const Navigation = () => {
   };
   return (
     <header className={s.header}>
-      <p>Search Movies</p>
+      <p>Welcom for Search Movies</p>
       <nav>
         <ul className={s.nav}>
           <li>

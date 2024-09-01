@@ -25,9 +25,9 @@ const HomePage = () => {
 
   return (
     <>
-      <h1 className={s.title}>Trending movies today</h1>
-      {isLoading && <div>Trending movies is loading...</div>}
-      {error && <div>Oops! Something went wrong</div>}
+      <h1 className={s.title}>Trending movies </h1>
+      {isLoading && <div>Trending movies is loading</div>}
+      {error && <div>Something went wrong</div>}
       <MovieList movies={movies} />
     </>
   );

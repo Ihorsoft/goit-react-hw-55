@@ -16,7 +16,7 @@ const MovieReviews = () => {
         const Reviews = await fetchMovieReviewById(movieId);
         setReview(Reviews);
       } catch (error) {
-        setError(`Sorry, some mistake! ${error.message}`);
+        setError(` some mistake ${error.message}`);
       } finally {
         setIsLoading(false);
       }
@@ -28,9 +28,7 @@ const MovieReviews = () => {
     <>
       {isLoading && <div>Movie reviews is loading...</div>}
       {error && <div>Oops! Something went wrong</div>}
-      {review.length === 0 && (
-        <div>There are currently no reviews for this movie</div>
-      )}
+      {review.length === 0 && <div>No reviews for this movie</div>}
       <ul className={s.reviewsList}>
         {review.map(({ id, author, content }) => (
           <li key={id}>
